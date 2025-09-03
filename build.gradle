@@ -1,0 +1,61 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.2.0' apply false
+    id 'io.spring.dependency-management' version '1.1.4' apply false
+}
+
+allprojects {
+    group = 'com.example'
+    version = '1.0.0'
+    
+    repositories {
+        mavenCentral()
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+    
+    java {
+        sourceCompatibility = '17'
+    }
+    
+    dependencies {
+        implementation 'org.springframework.boot:spring-boot-starter'
+        implementation 'org.springframework.kafka:spring-kafka'
+        implementation 'com.fasterxml.jackson.core:jackson-databind'
+        implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+        testImplementation 'org.springframework.kafka:spring-kafka-test'
+    }
+    
+    test {
+        useJUnitPlatform()
+    }
+}
+
+project(':common-events') {
+    bootJar.enabled = false
+    jar.enabled = true
+    
+    dependencies {
+        implementation 'com.fasterxml.jackson.core:jackson-annotations'
+    }
+}
+
+project(':order-service') {
+    dependencies {
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+        implementation project(':common-events')
+    }
+}
+
+project(':order-status-service') {
+    dependencies {
+        implementation project(':common-events')
+        implementation 'com.fasterxml.jackson.core:jackson-databind'
+        implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+    }
+}

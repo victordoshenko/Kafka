@@ -1,0 +1,5 @@
+rootProject.name = 'kafka-order-system'
+
+include 'common-events'
+include 'order-service'
+include 'order-status-service'
